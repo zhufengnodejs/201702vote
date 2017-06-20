@@ -35,6 +35,18 @@ voteFn = {
             `
         )
     },
+    setItem(key,value){
+        localStorage.setItem(key,value)
+    },
+    getItem(key){
+        localStorage.getItem(key);
+    },
+    getUser(){
+        return voteFn.getItem('user')?JSON.parse(voteFn.getItem('user')):null;
+    },
+    setUser(user){//向localStorage中保存user对象
+        voteFn.setItem('user',JSON.stringify(user));
+    },
     request({url,type='GET',data={},dataType='json',success}){
         $.ajax({url, type, data, dataType, success});
     },
@@ -49,7 +61,7 @@ voteFn = {
         });
         loadMore({
             callback(load){
-                $.ajax({
+                voteFn.request({
                     url: '/vote/index/data',
                     type: 'GET',
                     data: {offset, limit},
@@ -110,11 +122,21 @@ voteFn = {
     },
     initRegister(){
       $('.rebtn').click(function(){
-        let user = getRegisterUser();
+        let user = voteFn.getRegisterUser();
         if(user){
-            $.ajax({
-                url:
-            })
+           voteFn.request({
+               url:'/vote/register/data',
+               type:'POST',
+               data:user,
+               success(result){
+                   if(result.errno == 0){
+                       user.id = result.id;
+                       voteFn.setUser(user);
+                       location = '/vote/index';
+                       alert(result.msg);
+                   }
+               }
+           })
         }
       });
     }
