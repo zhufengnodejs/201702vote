@@ -2,6 +2,7 @@
 let offset = 80;
 //每页的最大条数
 let limit = 10;
+// fetch axios
 voteFn = {
     formatUser(user){
         return (
@@ -34,12 +35,13 @@ voteFn = {
             `
         )
     },
+    request({url,type='GET',data={},dataType='json',success}){
+        $.ajax({url, type, data, dataType, success});
+    },
     initIndex(){
-        $.ajax({
+        voteFn.request({
             url: '/vote/index/data',
-            type: 'GET',
             data: {offset, limit},
-            dataType: 'json',
             success(result){//是一个结果
                 offset += limit;//在加载一页成功之后改变offset值
                 $('.coming').html(result.data.objects.map(user => voteFn.formatUser(user)).join(''));
@@ -110,7 +112,9 @@ voteFn = {
       $('.rebtn').click(function(){
         let user = getRegisterUser();
         if(user){
-
+            $.ajax({
+                url:
+            })
         }
       });
     }
