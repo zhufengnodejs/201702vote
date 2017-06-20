@@ -86,6 +86,24 @@ voteFn = {
                 });
             }
         });
+        $('.sign_in').click(function(){
+            $('.mask').show();
+            $('.subbtn').click(function(){
+                let id = $('.usernum').val();
+                let password = $('.user_password').val();
+                voteFn.request({
+                    url:'/vote/index/info',
+                    type:'POST',
+                    data:{id,password},
+                    success(result){ //成功的回调
+                        alert(result.msg);
+                        if(result.errno ==0){
+                            location = '/vote/index';
+                        }
+                    }
+                });
+            });
+        });
     },
     getRegisterUser(){
         let username = $('.username').val();
