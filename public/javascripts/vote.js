@@ -39,13 +39,16 @@ voteFn = {
         localStorage.setItem(key,value)
     },
     getItem(key){
-        localStorage.getItem(key);
+        return localStorage.getItem(key);
     },
     getUser(){
         return voteFn.getItem('user')?JSON.parse(voteFn.getItem('user')):null;
     },
     setUser(user){//向localStorage中保存user对象
         voteFn.setItem('user',JSON.stringify(user));
+    },
+    clearUser(){
+        localStorage.removeItem('user');
     },
     request({url,type='GET',data={},dataType='json',success}){
         $.ajax({url, type, data, dataType, success});
@@ -96,6 +99,7 @@ voteFn = {
                     type:'POST',
                     data:{id,password},
                     success(result){ //成功的回调
+                        voteFn.setUser(result.user);
                         alert(result.msg);
                         if(result.errno ==0){
                             location = '/vote/index';
@@ -104,6 +108,18 @@ voteFn = {
                 });
             });
         });
+        let user = voteFn.getUser();
+        if(user){
+            $('.sign_in span').text('已登入');
+            $('.register a').text('个人主页');
+            $('.register a').attr('href',`/vote/detail/${user.id}`);
+            $('.username').text(user.username);
+            $('.no_signed').hide();
+            $('.dropout').click(function(){
+                voteFn.clearUser();
+                location.reload();
+            });
+        }
     },
     getRegisterUser(){
         let username = $('.username').val();
