@@ -16,7 +16,7 @@
         this.domRefresh = obj.domRefresh === undefined ? '<div class="dropload-refresh">↑上拉加载更多</div>' : obj.domRefresh;
         this.dropUpdate = obj.dropUpdate === undefined ? '<div class="dropload-update">↓释放加载</div>' : obj.dropUpdate;
         this.dropLoad = obj.dropLoad === undefined ? '<div class="dropload-load"><span class="loading"></span>加载中...</div>' : obj.dropLoad;
-        this.dropComplete = obj.dropComplete === undefined ? '<div class="dropload-complete">内容已全部显示！</div>' : obj.dropComplete;
+        this.dropComplete = obj.dropComplete === undefined ? '<div class="dropload-complete">我是有底线的！</div>' : obj.dropComplete;
         this.callback = obj.callback === undefined ? "" : obj.callback;
         this.init();
         this.isLoad();

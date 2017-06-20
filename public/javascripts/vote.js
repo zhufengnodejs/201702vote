@@ -1,5 +1,5 @@
 //偏移量
-let offset = 0;
+let offset = 80;
 //每页的最大条数
 let limit = 10;
 voteFn = {
@@ -35,17 +35,44 @@ voteFn = {
         )
     }
 }
-$(function(){
+$(function () {
     $.ajax({
-        url:'/vote/index/data',
-        type:'GET',
-        data:{offset,limit},
-        dataType:'json',
+        url: '/vote/index/data',
+        type: 'GET',
+        data: {offset, limit},
+        dataType: 'json',
         success(result){//是一个结果
-          offset += limit;//在加载一页成功之后改变offset值
-          $('.coming').html(result.data.objects.map(user=>voteFn.formatUser(user)).join(''));
+            offset += limit;//在加载一页成功之后改变offset值
+            $('.coming').html(result.data.objects.map(user => voteFn.formatUser(user)).join(''));
         }
     });
 
+    loadMore({
+        callback(load){
+            $.ajax({
+                url: '/vote/index/data',
+                type: 'GET',
+                data: {offset, limit},
+                dataType: 'json',
+                success(result){//是一个结果
+                    offset += limit;//在加载一页成功之后改变offset值
+                    // 20  15
+                    if (offset >= result.data.total) {
+                        $('.coming').append(result.data.objects.map(user => voteFn.formatUser(user)).join(''));
+                        load.complete();
+                        setTimeout(function(){
+                            load.reset();
+                        },1000);
+                    } else {
+                        setTimeout(function () {
+                            $('.coming').append(result.data.objects.map(user => voteFn.formatUser(user)).join(''));
+                            load.reset();
+                        }, 1000);
+                    }
+
+                }
+            });
+        }
+    });
 
 });
