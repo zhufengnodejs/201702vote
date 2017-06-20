@@ -17,7 +17,7 @@ voteFn = {
                            <div class="vote">
                               <span>${user.vote}票</span>
                            </div>
-                           <div class="btn">
+                           <div data-id="${user.id}" class="btn">
                               投TA一票
                            </div>
                         </div>
@@ -120,6 +120,24 @@ voteFn = {
                 location.reload();
             });
         }
+        $('.coming').click(function(event){
+            if(event.target.className == 'btn'){
+                let voterId = user.id;//投票人ID
+                let id = event.target.dataset.id;//被投票人ID
+                voteFn.request({
+                    url:'/vote/index/poll',
+                    data:{id,voterId},
+                    success(result){
+                        alert(result.msg);
+                        if(result.errno == 0){
+                            let voteSpan = $(event.target).siblings('.vote').children('span');
+                            voteSpan.text((parseInt(voteSpan.text())+1)+'票');
+                        }
+                    }
+                });
+
+            }
+        });
     },
     getRegisterUser(){
         let username = $('.username').val();
