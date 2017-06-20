@@ -72,14 +72,60 @@ voteFn = {
                 });
             }
         });
+    },
+    getRegisterUser(){
+        let username = $('.username').val();
+        if(!username || username.length==0){
+            alert('用户名不能为空');
+            return;
+        }
+        let initial_password = $('.initial_password').val();
+        if(!/[0-9a-zA-Z]{1,10}/.test(initial_password)){
+            alert('密码不合法,请重新输入');
+            return;
+        }
+        let confirm_password = $('.confirm_password').val();
+        if(initial_password!=confirm_password){
+            alert('确认密码和密码不一致，请重新输入.');
+            return;
+        }
+        let mobile = $('.mobile').val();
+        if(!/1\d{10}/.test(mobile)){
+            alert('手机号输入不正确，请重新输入');return;
+        }
+        let description =$('.description').val();
+        if(!description || description.length>20){
+            alert('描述输入不正确');return;
+        }
+        let gender = $("input[name='gender']:checked").val();
+        return {
+            username,
+            password:initial_password,
+            mobile,
+            description,
+            gender
+        }
+    },
+    initRegister(){
+      $('.rebtn').click(function(){
+        let user = getRegisterUser();
+        if(user){
+
+        }
+      });
     }
 }
+//首页的正则
 let indexReg = /\/vote\/index/;
+//注册页的正则
+let registerReg = /\/vote\/register/;
 $(function () {
     //取得当前路径名
     let url = location.pathname;
     if(indexReg.test(url)){
         voteFn.initIndex();
+    }else if(registerReg.test(url)){
+        voteFn.initRegister();
     }
 
 
