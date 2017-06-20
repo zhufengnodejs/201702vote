@@ -33,46 +33,54 @@ voteFn = {
                     </li>
             `
         )
+    },
+    initIndex(){
+        $.ajax({
+            url: '/vote/index/data',
+            type: 'GET',
+            data: {offset, limit},
+            dataType: 'json',
+            success(result){//是一个结果
+                offset += limit;//在加载一页成功之后改变offset值
+                $('.coming').html(result.data.objects.map(user => voteFn.formatUser(user)).join(''));
+            }
+        });
+        loadMore({
+            callback(load){
+                $.ajax({
+                    url: '/vote/index/data',
+                    type: 'GET',
+                    data: {offset, limit},
+                    dataType: 'json',
+                    success(result){//是一个结果
+                        offset += limit;//在加载一页成功之后改变offset值
+                        // 20  15
+                        if (offset >= result.data.total) {
+                            $('.coming').append(result.data.objects.map(user => voteFn.formatUser(user)).join(''));
+                            load.complete();
+                            setTimeout(function(){
+                                load.reset();
+                            },1000);
+                        } else {
+                            setTimeout(function () {
+                                $('.coming').append(result.data.objects.map(user => voteFn.formatUser(user)).join(''));
+                                load.reset();
+                            }, 1000);
+                        }
+
+                    }
+                });
+            }
+        });
     }
 }
+let indexReg = /\/vote\/index/;
 $(function () {
-    $.ajax({
-        url: '/vote/index/data',
-        type: 'GET',
-        data: {offset, limit},
-        dataType: 'json',
-        success(result){//是一个结果
-            offset += limit;//在加载一页成功之后改变offset值
-            $('.coming').html(result.data.objects.map(user => voteFn.formatUser(user)).join(''));
-        }
-    });
+    //取得当前路径名
+    let url = location.pathname;
+    if(indexReg.test(url)){
+        voteFn.initIndex();
+    }
 
-    loadMore({
-        callback(load){
-            $.ajax({
-                url: '/vote/index/data',
-                type: 'GET',
-                data: {offset, limit},
-                dataType: 'json',
-                success(result){//是一个结果
-                    offset += limit;//在加载一页成功之后改变offset值
-                    // 20  15
-                    if (offset >= result.data.total) {
-                        $('.coming').append(result.data.objects.map(user => voteFn.formatUser(user)).join(''));
-                        load.complete();
-                        setTimeout(function(){
-                            load.reset();
-                        },1000);
-                    } else {
-                        setTimeout(function () {
-                            $('.coming').append(result.data.objects.map(user => voteFn.formatUser(user)).join(''));
-                            load.reset();
-                        }, 1000);
-                    }
-
-                }
-            });
-        }
-    });
 
 });
