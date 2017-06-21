@@ -2,6 +2,14 @@
 let offset = 80;
 //每页的最大条数
 let limit = 10;
+//取得当前路径名
+let url = location.pathname;
+//首页的正则
+let indexReg = /\/vote\/index/;
+//注册页的正则
+let registerReg = /\/vote\/register/;
+//个人主页的正则
+let detailReg = /\/vote\/detail\/(\d+)/;
 // fetch axios
 voteFn = {
     formatUser(user){
@@ -191,19 +199,28 @@ voteFn = {
            })
         }
       });
+    },
+    initDetail(){
+        let result = url.match(detailReg);
+        let id = result[1];
+        voteFn.request({
+            url:'/vote/all/detail/data',
+            data:{id},
+            success(result){
+                console.log(result);
+            }
+        })
     }
 }
-//首页的正则
-let indexReg = /\/vote\/index/;
-//注册页的正则
-let registerReg = /\/vote\/register/;
+
 $(function () {
-    //取得当前路径名
-    let url = location.pathname;
+
     if(indexReg.test(url)){
         voteFn.initIndex();
     }else if(registerReg.test(url)){
         voteFn.initRegister();
+    }else if(detailReg.test(url)){
+        voteFn.initDetail();
     }
 
 
