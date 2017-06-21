@@ -1,5 +1,5 @@
 //偏移量
-let offset = 80;
+let offset = 0;
 //每页的最大条数
 let limit = 10;
 //取得当前路径名
@@ -17,7 +17,7 @@ voteFn = {
             `
              <li>        
                         <div class="head">
-                           <a href="detail.html">
+                           <a href="/vote/detail/${user.id}">
                               <img src="${user.head_icon}" alt="">
                            </a>
                         </div>
@@ -30,7 +30,7 @@ voteFn = {
                            </div>
                         </div>
                         <div class="descr">
-                           <a href="detail.html">
+                           <a href="/vote/detail/${user.id}">
                              <div>
                                 <span>${user.username}</span>
                                 <span>|</span>
@@ -200,6 +200,50 @@ voteFn = {
         }
       });
     },
+    formatUserDetail(user){
+      return (
+          `
+          <div class="pl">
+					<div class="head">
+						<img src="${user.head_icon}" alt="">
+					</div>
+					<div class="p_descr">
+						<p>${user.username}</p>
+						<p>编号#${user.id}</p>
+					</div>
+				</div>
+				<div class="pr">
+					<div class="p_descr pr_descr">
+						<p>${user.rank}名</p>
+						<p>${user.vote}票</p>
+					</div>
+				</div>
+				<div class="motto">
+					${user.description}
+				</div>
+          `
+      )
+    },
+    formatFriend(friend){
+        return (
+            `
+            <li>
+				    <div class="head">
+				        <a href="#"><img src="${friend.head_icon}" alt=""></a>
+				    </div>
+				    <div class="up">
+				    	<div class="vote">
+				    		<span>投了一票</span>
+				    	</div>
+				    </div>
+				    <div class="descr">
+				        <h3>${friend.username}</h3>
+				        <p>编号#${friend.id}</p>
+				    </div>
+				</li>
+            `
+        )
+    },
     initDetail(){
         let result = url.match(detailReg);
         let id = result[1];
@@ -207,7 +251,11 @@ voteFn = {
             url:'/vote/all/detail/data',
             data:{id},
             success(result){
-                console.log(result);
+                let user = result.data;
+                let html = voteFn.formatUserDetail(user);
+                $('.personal').html(html);
+                let friendHtml = user.vfriend.map(friend=>voteFn.formatFriend(friend)).join('');
+                $('.vflist').html(friendHtml);
             }
         })
     }
