@@ -146,6 +146,11 @@ voteFn = {
 
             }
         });
+        $('.search span').click(function(){
+            let keyword = $('.search input').val();
+            voteFn.setItem('keyword',keyword);
+            location = '/vote/search';
+        });
     },
     getRegisterUser(){
         let username = $('.username').val();
