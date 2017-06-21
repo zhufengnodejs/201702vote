@@ -270,9 +270,13 @@ voteFn = {
         })
     },
     initSearch(){
+        //得到在首页输入并保存的关键字
         let keyword = voteFn.getItem('keyword');
+        //得到用户对象
         let user = voteFn.getUser();
+        //绑定用户投票事件
         voteFn.bindVote(user);
+        //向后台发起搜索请求，请求搜索结果
         voteFn.request({
             url:'/vote/index/search',
             data:{content:keyword},
