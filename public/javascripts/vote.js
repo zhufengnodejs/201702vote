@@ -10,6 +10,8 @@ let indexReg = /\/vote\/index/;
 let registerReg = /\/vote\/register/;
 //个人主页的正则
 let detailReg = /\/vote\/detail\/(\d+)/;
+//搜索结果页的正则
+let searchReg = /\/vote\/search/;
 // fetch axios
 voteFn = {
     formatUser(user){
@@ -60,6 +62,26 @@ voteFn = {
     },
     request({url,type='GET',data={},dataType='json',success}){
         $.ajax({url, type, data, dataType, success});
+    },
+    bindVote(user){
+        $('.coming').click(function(event){
+            if(event.target.className == 'btn'){
+                let voterId = user.id;//投票人ID
+                let id = event.target.dataset.id;//被投票人ID
+                voteFn.request({
+                    url:'/vote/index/poll',
+                    data:{id,voterId},
+                    success(result){
+                        alert(result.msg);
+                        if(result.errno == 0){
+                            let voteSpan = $(event.target).siblings('.vote').children('span');
+                            voteSpan.text((parseInt(voteSpan.text())+1)+'票');
+                        }
+                    }
+                });
+
+            }
+        });
     },
     initIndex(){
         voteFn.request({
@@ -128,24 +150,7 @@ voteFn = {
                 location.reload();
             });
         }
-        $('.coming').click(function(event){
-            if(event.target.className == 'btn'){
-                let voterId = user.id;//投票人ID
-                let id = event.target.dataset.id;//被投票人ID
-                voteFn.request({
-                    url:'/vote/index/poll',
-                    data:{id,voterId},
-                    success(result){
-                        alert(result.msg);
-                        if(result.errno == 0){
-                            let voteSpan = $(event.target).siblings('.vote').children('span');
-                            voteSpan.text((parseInt(voteSpan.text())+1)+'票');
-                        }
-                    }
-                });
-
-            }
-        });
+        voteFn.bindVote(user);
         $('.search span').click(function(){
             let keyword = $('.search input').val();
             voteFn.setItem('keyword',keyword);
@@ -263,17 +268,32 @@ voteFn = {
                 $('.vflist').html(friendHtml);
             }
         })
+    },
+    initSearch(){
+        let keyword = voteFn.getItem('keyword');
+        let user = voteFn.getUser();
+        voteFn.bindVote(user);
+        voteFn.request({
+            url:'/vote/index/search',
+            data:{content:keyword},
+            success(result){
+                let users = result.data;
+                let html = users.map(user=>voteFn.formatUser(user)).join('');
+                $('.coming').html(html);
+            }
+        })
     }
 }
 
 $(function () {
-
     if(indexReg.test(url)){
         voteFn.initIndex();
     }else if(registerReg.test(url)){
         voteFn.initRegister();
     }else if(detailReg.test(url)){
         voteFn.initDetail();
+    }else if(searchReg.test(url)){
+        voteFn.initSearch();
     }
 
 
